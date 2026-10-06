@@ -41,7 +41,26 @@ Bot quyidagi varaqlarni o'zi yaratadi:
 6. Faylni oching va `client_email` qatoridagi manzilni nusxalang (`...@....iam.gserviceaccount.com`).
 7. Google Sheets jadvalingizda **Share (Bulish)** tugmasini bosing → shu email'ni qo'shing → **Editor** huquqini bering → **Send**.
 
-### 4. Serverga joylash
+### 4. Raven Host'ga joylash (panel orqali)
+1. Raven Host panelida yangi server oching va turini **Python** qilib tanlang. Python versiyasi **3.10 yoki undan yangi** bo'lsin (3.11/3.12 tavsiya qilinadi).
+2. **Files (Fayllar)** bo'limiga quyidagi fayllarni yuklang:
+   - `bot.py`, `storage.py`, `requirements.txt` (yoki ZIP arxivni yuklab, **Unarchive** qiling);
+   - `service-account.json` (3-qadamda olingan Google kaliti).
+3. Panelda **New file** tugmasi orqali `.env` nomli fayl yarating. Ichiga quyidagini yozing:
+   ```
+   BOT_TOKEN=BotFather bergan token
+   SPREADSHEET=Google Sheets jadval havolasi
+   GOOGLE_CREDENTIALS=service-account.json
+   ```
+4. **Startup** bo'limida quyidagilarni sozlang:
+   - ishga tushadigan fayl (App py file / Startup file) — `bot.py`;
+   - requirements fayli — `requirements.txt`.
+5. **Console** bo'limida **Start** ni bosing. Kutubxonalar o'rnatiladi, keyin ekranda `Google Sheets ulandi` yozuvi chiqadi.
+6. Bot ishlayotganini tekshirish uchun Telegram'da botga `/start` yozing.
+
+> Bepul serverlarda ba'zan muddatni uzaytirish (renew) talab qilinadi. Panelda shunday tugma bo'lsa, vaqtida bosib turing.
+
+### 4b. Oddiy Linux VPS'ga joylash
 `bot` papkasini serverga ko'chiring. `service-account.json` faylini ham shu papkaga qo'ying. Keyin quyidagilarni bajaring:
 
 ```bash
@@ -59,7 +78,7 @@ Ekranda `Google Sheets ulandi` yozuvi chiqsa, bot ishlayapti.
 1. **Avval o'zingiz** botga `/start` yozing. Birinchi `/start` yozgan odam **admin** bo'ladi.
 2. Xodimlaringiz botga `/start` yozadi. Sizga so'rov keladi, **✅ Ruxsat berish** tugmasini bosasiz.
 
-### 6. Bot doim ishlab turishi uchun (Linux server)
+### 6. Bot doim ishlab turishi uchun (faqat oddiy Linux VPS, Raven Host uchun kerak emas)
 ```bash
 sudo cp quvbot.service /etc/systemd/system/   # ichidagi USER va yo'llarni to'g'rilang
 sudo systemctl daemon-reload
