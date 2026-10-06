@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Gorizontal velotrenajor">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eaf4f1"/><stop offset="1" stop-color="#d6e9e3"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#g)"/>
+<circle cx="330" cy="60" r="90" fill="#0fae8a" opacity=".10"/>
+<ellipse cx="200" cy="262" rx="160" ry="10" fill="#000" opacity=".12"/>
+<g stroke-linecap="round" stroke-linejoin="round" fill="none">
+<line x1="60" y1="252" x2="140" y2="252" stroke="#1b1d24" stroke-width="10"/>
+<line x1="260" y1="252" x2="345" y2="252" stroke="#1b1d24" stroke-width="10"/>
+<path d="M100 252 L120 200 L300 214 L300 252" stroke="#8a8f9c" stroke-width="13"/>
+<rect x="72" y="150" width="80" height="80" rx="34" fill="#1b1d24" stroke="none"/>
+<circle cx="112" cy="190" r="18" fill="#0fae8a" stroke="none"/>
+<circle cx="112" cy="190" r="12" fill="#1b1d24" stroke="none"/>
+<line x1="112" y1="190" x2="96" y2="168" stroke="#555a66" stroke-width="5"/>
+<line x1="140" y1="168" x2="150" y2="96" stroke="#8a8f9c" stroke-width="10"/>
+<rect x="132" y="74" width="40" height="22" rx="5" fill="#1b1d24" stroke="none"/><rect x="138" y="79" width="22" height="11" rx="2" fill="#0fae8a" stroke="none"/>
+<path d="M230 200 L330 196" stroke="#1b1d24" stroke-width="16"/>
+<path d="M296 196 L330 116" stroke="#1b1d24" stroke-width="18"/>
+<path d="M226 214 L214 236 M300 210 L318 236" stroke="#8a8f9c" stroke-width="7"/>
+<path d="M210 220 L250 220" stroke="#0fae8a" stroke-width="6"/>
+</g>
+</svg>
