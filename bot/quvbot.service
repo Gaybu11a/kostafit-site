@@ -1,0 +1,15 @@
+# Linux serverda bot doim ishlab turishi uchun (systemd).
+# /home/USER/bot ni o'z papkangizga, USER ni o'z foydalanuvchi nomingizga almashtiring.
+[Unit]
+Description=QuvMarkets sotuv boti
+After=network-online.target
+
+[Service]
+User=USER
+WorkingDirectory=/home/USER/bot
+ExecStart=/home/USER/bot/venv/bin/python bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
