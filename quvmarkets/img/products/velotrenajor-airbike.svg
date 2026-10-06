@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Air bike">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1f1f3"/><stop offset="1" stop-color="#d6d8de"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#g)"/>
+<circle cx="330" cy="60" r="90" fill="#ff5a1f" opacity=".10"/>
+<ellipse cx="200" cy="262" rx="160" ry="10" fill="#000" opacity=".12"/>
+<g stroke-linecap="round" stroke-linejoin="round" fill="none">
+<line x1="70" y1="252" x2="200" y2="252" stroke="#1b1d24" stroke-width="10"/>
+<line x1="230" y1="252" x2="330" y2="252" stroke="#1b1d24" stroke-width="10"/>
+<circle cx="140" cy="186" r="62" fill="#20232b" stroke="#1b1d24" stroke-width="6"/>
+<line x1="140" y1="186" x2="190.0" y2="186.0" stroke="#555a66" stroke-width="5"/><line x1="140" y1="186" x2="180.5" y2="215.4" stroke="#555a66" stroke-width="5"/><line x1="140" y1="186" x2="155.5" y2="233.6" stroke="#555a66" stroke-width="5"/><line x1="140" y1="186" x2="124.6" y2="233.6" stroke="#555a66" stroke-width="5"/><line x1="140" y1="186" x2="99.6" y2="215.4" stroke="#555a66" stroke-width="5"/><line x1="140" y1="186" x2="90.0" y2="186.0" stroke="#555a66" stroke-width="5"/><line x1="140" y1="186" x2="99.5" y2="156.6" stroke="#555a66" stroke-width="5"/><line x1="140" y1="186" x2="124.5" y2="138.4" stroke="#555a66" stroke-width="5"/><line x1="140" y1="186" x2="155.4" y2="138.4" stroke="#555a66" stroke-width="5"/><line x1="140" y1="186" x2="180.4" y2="156.6" stroke="#555a66" stroke-width="5"/>
+<circle cx="140" cy="186" r="62" fill="none" stroke="#ff5a1f" stroke-width="5" stroke-dasharray="14 10"/>
+<circle cx="140" cy="186" r="12" fill="#ff5a1f" stroke="none"/>
+<path d="M140 252 L150 200 L260 214 L285 252" stroke="#8a8f9c" stroke-width="12"/>
+<path d="M190 210 L178 66 M178 66 L162 60" stroke="#1b1d24" stroke-width="9"/>
+<path d="M200 210 L208 70" stroke="#8a8f9c" stroke-width="9"/>
+<line x1="248" y1="210" x2="266" y2="120" stroke="#8a8f9c" stroke-width="11"/>
+<path d="M242 114 Q266 104 296 114 Q268 126 242 114Z" fill="#1b1d24" stroke="#1b1d24" stroke-width="4"/>
+<circle cx="222" cy="210" r="13" fill="#1b1d24" stroke="none"/>
+</g>
+</svg>

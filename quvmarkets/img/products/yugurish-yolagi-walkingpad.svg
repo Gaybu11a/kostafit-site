@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Walking pad">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3efe9"/><stop offset="1" stop-color="#e6ded2"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#g)"/>
+<circle cx="330" cy="60" r="90" fill="#ff5a1f" opacity=".10"/>
+<ellipse cx="200" cy="262" rx="160" ry="10" fill="#000" opacity=".12"/>
+<g><rect x="50" y="210" width="300" height="36" rx="18" fill="#1b1d24"/>
+<rect x="70" y="204" width="260" height="14" rx="7" fill="#2b2e38"/>
+<line x1="82" y1="211" x2="318" y2="211" stroke="#555a66" stroke-width="2" stroke-dasharray="6 6"/>
+<rect x="60" y="222" width="34" height="10" rx="5" fill="#ff5a1f"/>
+<g transform="translate(250 90)"><rect width="70" height="110" rx="14" fill="#1b1d24"/><rect x="10" y="12" width="50" height="34" rx="5" fill="#ff5a1f" opacity=".9"/><circle cx="35" cy="76" r="14" fill="#2b2e38"/><circle cx="35" cy="76" r="5" fill="#8a8f9c"/></g>
+</g>
+</svg>
