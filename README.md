@@ -23,3 +23,8 @@ Jadval ma'lumotlari `js/main.js` dagi `schedule` obyektida.
 
 Agar o'z domeningiz bo'lsa (masalan `kostafit.uz`), `index.html`, `sitemap.xml`, `robots.txt` dagi
 `https://gaybu11a.github.io/kostafit-site/` manzilini yangisiga almashtiring.
+
+## O'yin (offline)
+`game.html` — **KostaFit Runner**: internetsiz ishlaydigan yugurish o'yini (`game-sw.js` keshlaydi).
+Manzil: https://gaybu11a.github.io/kostafit-site/game.html — bir marta oching, keyin offline o'ynash mumkin.
+Telefonda "Bosh ekranga qo'shish" orqali ilova kabi o'rnatsa ham bo'ladi.

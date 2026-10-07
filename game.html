@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>KostaFit Runner — offline o'yin</title>
+  <meta name="description" content="KostaFit Runner — internetsiz ishlaydigan oddiy yugurish o'yini. To'siqlardan sakrang, protein kokteyllarini yig'ing!">
+  <meta name="theme-color" content="#0b0b0c">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="game.webmanifest">
+  <style>
+    :root { --bg:#0b0b0c; --fg:#f2f2f2; --neon:#c6ff00; --muted:#8a8a8f; --red:#ff4d4d; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html, body { height:100%; background:var(--bg); color:var(--fg);
+      font-family:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow:hidden;
+      -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+    #wrap { position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+    canvas { display:block; width:100%; height:100%; }
+    .hud { position:absolute; top:12px; left:16px; right:16px; display:flex; justify-content:space-between;
+      font-weight:800; font-size:18px; letter-spacing:.5px; pointer-events:none; }
+    .hud b { color:var(--neon); }
+    .overlay { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:14px; text-align:center; padding:16px; background:rgba(11,11,12,.72); }
+    .overlay.hidden { display:none; }
+    h1 { font-size:clamp(32px, 8vw, 64px); text-transform:uppercase; letter-spacing:2px; line-height:1; }
+    h1 span { color:var(--neon); }
+    p { color:var(--muted); max-width:420px; line-height:1.5; }
+    .btn { background:var(--neon); color:#0b0b0c; border:0; border-radius:999px; padding:14px 34px;
+      font-size:18px; font-weight:800; text-transform:uppercase; cursor:pointer; }
+    .btn:active { transform:scale(.97); }
+    .small { font-size:13px; }
+    a.back { position:absolute; bottom:14px; color:var(--muted); font-size:13px; text-decoration:none; }
+    #pauseBtn { position:absolute; top:44px; right:16px; background:transparent; border:1px solid #333; color:var(--fg);
+      border-radius:8px; width:36px; height:36px; font-size:16px; cursor:pointer; }
+  </style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="c"></canvas>
+  <div class="hud"><div>Ochko: <b id="score">0</b></div><div>Rekord: <b id="best">0</b></div></div>
+  <button id="pauseBtn" aria-label="Pauza">❚❚</button>
+
+  <div class="overlay" id="startScreen">
+    <h1>Kosta<span>Fit</span><br>Runner</h1>
+    <p>Gantel va girlarga urilmang! Protein kokteyllarini <b style="color:var(--neon)">🥤</b> yig'ib qo'shimcha ochko oling.</p>
+    <p class="small">Sakrash: <b>ekranga bosing</b>, <b>Probel</b> yoki <b>↑</b>. Havoda yana bir marta bosing — ikki karra sakrash.<br>
+      Pastga tez tushish: <b>↓</b> yoki pastga suring. Pauza: <b>P</b>.</p>
+    <button class="btn" id="startBtn">Boshlash</button>
+    <p class="small" id="offlineNote">Internetsiz ham ishlaydi — bir marta oching, keyin offline o'ynayvering.</p>
+  </div>
+
+  <div class="overlay hidden" id="overScreen">
+    <h1>O'yin<br><span>tugadi</span></h1>
+    <p id="finalText"></p>
+    <button class="btn" id="againBtn">Yana o'ynash</button>
+  </div>
+
+  <div class="overlay hidden" id="pauseScreen">
+    <h1>Pauza</h1>
+    <button class="btn" id="resumeBtn">Davom etish</button>
+  </div>
+  <a class="back" href="index.html">← KostaFit saytiga qaytish</a>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const $ = id => document.getElementById(id);
+  const scoreEl = $('score'), bestEl = $('best');
+  const NEON = '#c6ff00', FG = '#f2f2f2', MUTED = '#3a3a40', RED = '#ff4d4d';
+
+  // Logical world size; canvas is scaled to fit
+  const W = 800, H = 300, GROUND = 250;
+  let scale = 1, offX = 0, offY = 0, dpr = 1;
+
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    canvas.width = innerWidth * dpr;
+    canvas.height = innerHeight * dpr;
+    scale = Math.min(innerWidth / W, innerHeight / H);
+    offX = (innerWidth - W * scale) / 2;
+    offY = (innerHeight - H * scale) / 2;
+  }
+  addEventListener('resize', resize);
+  resize();
+
+  let best = 0;
+  try { best = +localStorage.getItem('kostafit-runner-best') || 0; } catch (e) {}
+  bestEl.textContent = best;
+
+  let state = 'menu'; // menu | play | pause | over
+  let player, obstacles, pickups, particles, speed, score, bonus, spawnT, pickT, groundX, t;
+
+  function reset() {
+    player = { x: 80, y: GROUND, vy: 0, w: 34, h: 50, jumps: 0, fast: false };
+    obstacles = []; pickups = []; particles = [];
+    speed = 6; score = 0; bonus = 0; spawnT = 60; pickT = 200; groundX = 0; t = 0;
+  }
+  reset();
+
+  // ---- input ----
+  function jump() {
+    if (state !== 'play') return;
+    if (player.jumps < 2) {
+      player.vy = player.jumps === 0 ? -13 : -11;
+      player.jumps++;
+      player.fast = false;
+      burst(player.x + player.w / 2, player.y, 6, FG);
+    }
+  }
+  function drop() { if (state === 'play' && player.y < GROUND) player.fast = true; }
+
+  addEventListener('keydown', e => {
+    if (['Space', 'ArrowUp', 'KeyW'].includes(e.code)) {
+      e.preventDefault();
+      if (state === 'menu' || state === 'over') start(); else jump();
+    } else if (['ArrowDown', 'KeyS'].includes(e.code)) { e.preventDefault(); drop(); }
+    else if (e.code === 'KeyP' || e.code === 'Escape') togglePause();
+    else if (e.code === 'Enter' && state !== 'play') { state === 'pause' ? togglePause() : start(); }
+  });
+
+  let touchY = null;
+  canvas.addEventListener('pointerdown', e => { touchY = e.clientY; jump(); });
+  canvas.addEventListener('pointermove', e => {
+    if (touchY !== null && e.clientY - touchY > 40) { drop(); touchY = null; }
+  });
+  addEventListener('pointerup', () => { touchY = null; });
+
+  $('startBtn').onclick = start;
+  $('againBtn').onclick = start;
+  $('resumeBtn').onclick = togglePause;
+  $('pauseBtn').onclick = togglePause;
+  document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'play') togglePause(); });
+
+  function show(id, on) { $(id).classList.toggle('hidden', !on); }
+
+  function start() {
+    reset();
+    state = 'play';
+    show('startScreen', false); show('overScreen', false); show('pauseScreen', false);
+  }
+  function togglePause() {
+    if (state === 'play') { state = 'pause'; show('pauseScreen', true); }
+    else if (state === 'pause') { state = 'play'; show('pauseScreen', false); last = performance.now(); }
+  }
+  function gameOver() {
+    state = 'over';
+    burst(player.x + player.w / 2, player.y - player.h / 2, 30, RED);
+    const total = Math.floor(score) + bonus;
+    let msg = `Natijangiz: <b style="color:${NEON}">${total}</b> ochko`;
+    if (total > best) {
+      best = total;
+      try { localStorage.setItem('kostafit-runner-best', best); } catch (e) {}
+      bestEl.textContent = best;
+      msg += '<br>🏆 Yangi rekord!';
+    } else msg += `<br>Rekord: ${best}`;
+    $('finalText').innerHTML = msg;
+    setTimeout(() => show('overScreen', true), 400);
+  }
+
+  // ---- spawning ----
+  const TYPES = [
+    { kind: 'dumbbell', w: 46, h: 26 },
+    { kind: 'kettlebell', w: 30, h: 38 },
+    { kind: 'stack', w: 40, h: 56 },      // stacked plates
+    { kind: 'ball', w: 34, h: 34, fly: true }, // medicine ball in the air
+  ];
+  function spawn() {
+    const pool = score < 150 ? TYPES.slice(0, 2) : score < 400 ? TYPES.slice(0, 3) : TYPES;
+    const o = { ...pool[Math.floor(Math.random() * pool.length)] };
+    o.x = W + 20;
+    o.y = o.fly ? GROUND - 60 - Math.random() * 30 : GROUND;
+    obstacles.push(o);
+    // sometimes a pair
+    if (score > 250 && Math.random() < 0.25 && !o.fly) {
+      obstacles.push({ ...TYPES[0], x: o.x + o.w + 10, y: GROUND });
+    }
+    const gap = Math.max(45, 110 - speed * 4);
+    spawnT = gap + Math.random() * gap;
+  }
+  function spawnPickup() {
+    pickups.push({ x: W + 20, y: GROUND - 40 - Math.random() * 110, r: 11, bob: Math.random() * 6 });
+    pickT = 180 + Math.random() * 220;
+  }
+
+  function burst(x, y, n, color) {
+    for (let i = 0; i < n; i++) particles.push({
+      x, y, vx: (Math.random() - .5) * 6, vy: -Math.random() * 5, life: 30 + Math.random() * 20, color
+    });
+  }
+
+  // ---- update ----
+  function hit(a, b) {
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y > b.y - b.h && a.y - a.h < b.y;
+  }
+
+  function update() {
+    t++;
+    speed = Math.min(16, 6 + score / 180);
+    score += speed * 0.05;
+    groundX = (groundX - speed) % 40;
+
+    // player physics
+    player.vy += player.fast ? 2.2 : 0.7;
+    player.y += player.vy;
+    if (player.y >= GROUND) {
+      if (player.jumps > 0 && player.vy > 4) burst(player.x + player.w / 2, GROUND, 4, MUTED);
+      player.y = GROUND; player.vy = 0; player.jumps = 0; player.fast = false;
+    }
+
+    if (--spawnT <= 0) spawn();
+    if (--pickT <= 0) spawnPickup();
+
+    // slightly forgiving hitbox
+    const pb = { x: player.x + 6, y: player.y - 2, w: player.w - 12, h: player.h - 8 };
+    for (const o of obstacles) {
+      o.x -= speed;
+      if (hit(pb, { x: o.x + 3, y: o.y, w: o.w - 6, h: o.h - 3 })) { gameOver(); break; }
+    }
+    obstacles = obstacles.filter(o => o.x + o.w > -20);
+
+    for (const p of pickups) {
+      p.x -= speed;
+      const cx = player.x + player.w / 2, cy = player.y - player.h / 2;
+      if (!p.got && Math.abs(cx - p.x) < 26 && Math.abs(cy - p.y) < 34) {
+        p.got = true; bonus += 25; burst(p.x, p.y, 12, NEON);
+      }
+    }
+    pickups = pickups.filter(p => !p.got && p.x > -20);
+
+    scoreEl.textContent = Math.floor(score) + bonus;
+  }
+
+  function updateParticles() {
+    for (const p of particles) { p.x += p.vx; p.y += p.vy; p.vy += 0.25; p.life--; }
+    particles = particles.filter(p => p.life > 0);
+  }
+
+  // ---- drawing ----
+  function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); ctx.fill(); }
+
+  function drawPlayer() {
+    const { x, y, w, h } = player;
+    const run = state === 'play' && y >= GROUND ? Math.sin(t * 0.45) : 0.6;
+    ctx.strokeStyle = FG; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    const hipX = x + w / 2, hipY = y - 18, shY = y - 38;
+    // legs
+    ctx.beginPath();
+    ctx.moveTo(hipX, hipY); ctx.lineTo(hipX + run * 10, y);
+    ctx.moveTo(hipX, hipY); ctx.lineTo(hipX - run * 10, y);
+    ctx.stroke();
+    // body
+    ctx.strokeStyle = NEON;
+    ctx.beginPath(); ctx.moveTo(hipX, hipY); ctx.lineTo(hipX + 3, shY); ctx.stroke();
+    // arms
+    ctx.strokeStyle = FG;
+    ctx.beginPath();
+    ctx.moveTo(hipX + 3, shY + 4); ctx.lineTo(hipX + 3 - run * 10, shY + 16);
+    ctx.moveTo(hipX + 3, shY + 4); ctx.lineTo(hipX + 3 + run * 10, shY + 16);
+    ctx.stroke();
+    // head + headband
+    ctx.fillStyle = FG;
+    ctx.beginPath(); ctx.arc(hipX + 5, y - h + 4, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = NEON; ctx.fillRect(hipX - 3, y - h + 1, 16, 3);
+  }
+
+  function drawObstacle(o) {
+    const { x, y, w, h } = o;
+    ctx.fillStyle = '#9a9aa2';
+    if (o.kind === 'dumbbell') {
+      ctx.fillStyle = '#6b6b72'; ctx.fillRect(x + 8, y - h / 2 - 3, w - 16, 6);
+      ctx.fillStyle = '#d0d0d6'; rr(x, y - h, 12, h, 3); rr(x + w - 12, y - h, 12, h, 3);
+    } else if (o.kind === 'kettlebell') {
+      ctx.strokeStyle = '#d0d0d6'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.arc(x + w / 2, y - h + 12, 9, Math.PI, 0); ctx.stroke();
+      ctx.fillStyle = '#d0d0d6'; ctx.beginPath(); ctx.arc(x + w / 2, y - 14, 15, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = RED; ctx.font = 'bold 10px system-ui'; ctx.textAlign = 'center'; ctx.fillText('24', x + w / 2, y - 10);
+    } else if (o.kind === 'stack') {
+      const colors = ['#ff4d4d', '#3d8bff', '#f5c400', '#d0d0d6'];
+      for (let i = 0; i < 4; i++) { ctx.fillStyle = colors[i]; rr(x, y - (i + 1) * 14, w, 12, 3); }
+    } else if (o.kind === 'ball') {
+      ctx.fillStyle = '#7a4dff'; ctx.beginPath(); ctx.arc(x + w / 2, y - h / 2, w / 2, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#0b0b0c'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(x + w / 2, y - h / 2, w / 2 - 6, t * 0.2, t * 0.2 + 2); ctx.stroke();
+    }
+  }
+
+  function drawPickup(p) {
+    const y = p.y + Math.sin(t * 0.1 + p.bob) * 4;
+    ctx.fillStyle = 'rgba(198,255,0,.18)'; ctx.beginPath(); ctx.arc(p.x, y, 18, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = NEON; rr(p.x - 8, y - 10, 16, 22, 4);
+    ctx.fillStyle = FG; ctx.fillRect(p.x - 9, y - 14, 18, 5);
+    ctx.fillStyle = '#0b0b0c'; ctx.fillRect(p.x - 5, y - 2, 10, 2);
+  }
+
+  function draw() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = '#0b0b0c'; ctx.fillRect(0, 0, innerWidth, innerHeight);
+    ctx.setTransform(dpr * scale, 0, 0, dpr * scale, dpr * offX, dpr * offY);
+
+    // background "gym window" lines
+    ctx.fillStyle = '#141417';
+    for (let i = 0; i < 6; i++) {
+      const bx = ((i * 170 + groundX * 0.3) % 1020 + 1020) % 1020 - 110;
+      ctx.fillRect(bx, 70, 90, 110);
+    }
+    // ground
+    ctx.fillStyle = MUTED; ctx.fillRect(0, GROUND, W, 2);
+    ctx.fillStyle = '#222226';
+    for (let gx = groundX; gx < W; gx += 40) ctx.fillRect(gx, GROUND + 10, 18, 2);
+
+    pickups.forEach(drawPickup);
+    obstacles.forEach(drawObstacle);
+    if (state !== 'over' || t % 10 < 5) drawPlayer();
+
+    for (const p of particles) {
+      ctx.globalAlpha = Math.max(0, p.life / 50);
+      ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 3, 3);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // fixed-timestep loop (60 updates/s regardless of screen refresh rate)
+  let last = performance.now(), acc = 0;
+  const STEP = 1000 / 60;
+  function loop(now) {
+    acc += Math.min(100, now - last); last = now;
+    while (acc >= STEP) {
+      if (state === 'play') update();
+      else if (state === 'over') t++;
+      if (state !== 'pause') updateParticles();
+      acc -= STEP;
+    }
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // offline support
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    navigator.serviceWorker.register('game-sw.js').catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
