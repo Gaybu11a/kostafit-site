@@ -1,5 +1,5 @@
 (() => {
-  const TG = "https://t.me/quvmarkets";
+  const TG = "https://t.me/quv_market";
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
