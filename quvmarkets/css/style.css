@@ -115,6 +115,7 @@ img.logo__mark { object-fit: cover; background: #120a08; }
 .specs li::before { content: ""; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .card__foot { margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding-top: 14px; border-top: 1px dashed var(--line); }
 .price { font-family: var(--head); font-weight: 700; font-size: 19px; letter-spacing: -.02em; white-space: nowrap; }
+.price__old { display: block; font-family: var(--body); font-size: 13px; font-weight: 600; color: var(--muted); }
 .price--ask { font-size: 16px; color: var(--accent); }
 .swatches { display: flex; gap: 8px; margin: -4px 0 14px; }
 .swatch { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--surface); background: var(--c); box-shadow: 0 0 0 1px var(--line); cursor: pointer; padding: 0; }
