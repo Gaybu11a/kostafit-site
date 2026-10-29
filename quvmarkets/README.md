@@ -8,17 +8,17 @@ Sayt manzili (GitHub Pages yoqilgan bo'lsa): https://gaybu11a.github.io/kostafit
 - `index.html` — barcha bo'limlar va mahsulotlar (katalog, afzalliklar, maslahat, savollar, aloqa)
 - `css/style.css` — dizayn
 - `js/main.js` — filtr/saralash, buyurtma oynasi, Telegram ariza formasi
-- `img/` — vaqtinchalik rasmlar
+- `img/products/` — mahsulot rasmlari (900×1200, 3:4 JPG), `img/logo*.{jpg,png}` — logotip
 
-## Rasmlarni o'z mahsulotingiz rasmiga almashtirish
-1. Rasmingizni `img/products/` papkasiga qo'ying (masalan `yugurish-yolagi-20.jpg`).
-2. `index.html` da shu mahsulotdagi `src="img/products/yugurish-yolagi-20.svg"` ni `.jpg` ga almashtiring.
-   Eng yaxshi o'lcham: 1200×900 (4:3), 300 KB dan kichik.
-3. Bosh sahifadagi katta rasmlar: `img/hero.svg` va `img/hero-bike.svg`.
+## Mahsulot rasmlari
+Rasmlar vertikal 3:4 (masalan 900×1200), JPG, 250 KB dan kichik bo'lsin.
+Yangi rasmni `img/products/` ga qo'yib, `index.html` dagi mahsulot kartasidagi `src` ni almashtiring.
 
 ## Mahsulot / narx qo'shish yoki o'zgartirish
 `index.html` dagi har bir `<article class="card" ... data-price="6800000">` — bitta mahsulot.
 Narxni o'zgartirsangiz, `data-price` va ko'rinadigan narxni ikkalasini ham yangilang.
+Narx hali ma'lum bo'lmasa `data-price` ni olib tashlang va narx o'rniga "Narxini so'rang" yozing.
+Bir nechta rangli mahsulot uchun RUNEX-YT kartasidagi `swatches` blokiga qarang.
 Yangi mahsulot uchun bitta `<article>` blokini nusxalab, matnini o'zgartiring
 (`data-cat="treadmill"` — yugurish yo'lagi, `data-cat="bike"` — velotrenajor).
 

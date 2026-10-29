@@ -51,6 +51,7 @@ button { background: none; border: 0; cursor: pointer; }
 .logo__mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: var(--ink); color: var(--accent); font-weight: 800; font-size: 20px; }
 .logo--light { color: #fff; }
 .logo--light .logo__mark { background: var(--accent); color: #fff; }
+img.logo__mark { object-fit: cover; background: #120a08; }
 .nav__links { display: flex; gap: 28px; margin-left: auto; font-weight: 700; font-size: 15px; }
 .nav__links a { position: relative; padding: 6px 0; }
 .nav__links a::after { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .25s; }
@@ -103,7 +104,7 @@ button { background: none; border: 0; cursor: pointer; }
 .card { position: relative; display: flex; flex-direction: column; background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); transition: transform .25s, box-shadow .25s; }
 .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 .card[hidden] { display: none; }
-.card__img { aspect-ratio: 4 / 3; overflow: hidden; background: #eceae5; }
+.card__img { aspect-ratio: 3 / 4; overflow: hidden; background: #eceae5; }
 .card__img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
 .card:hover .card__img img { transform: scale(1.04); }
 .card__body { display: flex; flex-direction: column; flex: 1; padding: 18px 20px 20px; }
@@ -114,6 +115,10 @@ button { background: none; border: 0; cursor: pointer; }
 .specs li::before { content: ""; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .card__foot { margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding-top: 14px; border-top: 1px dashed var(--line); }
 .price { font-family: var(--head); font-weight: 700; font-size: 19px; letter-spacing: -.02em; white-space: nowrap; }
+.price--ask { font-size: 16px; color: var(--accent); }
+.swatches { display: flex; gap: 8px; margin: -4px 0 14px; }
+.swatch { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--surface); background: var(--c); box-shadow: 0 0 0 1px var(--line); cursor: pointer; padding: 0; }
+.swatch.is-active { box-shadow: 0 0 0 2px var(--ink); }
 .price small { font-family: var(--body); font-size: 13px; color: var(--muted); font-weight: 700; }
 .card__foot .btn { flex: 1 0 auto; }
 .card__foot .price { flex: 1 0 auto; }
@@ -131,7 +136,7 @@ button { background: none; border: 0; cursor: pointer; }
 /* ---------- choose ---------- */
 .choose { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .choose__card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--line); padding: 22px; }
-.choose__card img { border-radius: 14px; margin-bottom: 18px; aspect-ratio: 16 / 9; object-fit: cover; width: 100%; }
+.choose__card img { border-radius: 14px; margin-bottom: 18px; aspect-ratio: 16 / 9; object-fit: cover; object-position: 50% 75%; width: 100%; }
 .choose__card h3 { font-family: var(--head); font-size: 20px; letter-spacing: -.02em; margin-bottom: 8px; }
 .choose__card > p { color: var(--muted); margin-bottom: 14px; }
 .choose__card ul { list-style: none; display: grid; gap: 8px; }
@@ -239,3 +244,5 @@ a.ccard:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

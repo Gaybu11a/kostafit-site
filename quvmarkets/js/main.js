@@ -36,11 +36,13 @@
     const mode = e.target.value;
     const key = c => mode === "default" ? +c.dataset.order : +c.dataset.price;
     const dir = mode === "desc" ? -1 : 1;
-    [...cards].sort((a, b) => (key(a) - key(b)) * dir).forEach(c => grid.appendChild(c));
+    // narxi yo'q mahsulotlar saralashda oxirida turadi
+    const priced = c => mode === "default" || !!c.dataset.price;
+    [...cards].sort((a, b) => (priced(b) - priced(a)) || (key(a) - key(b)) * dir).forEach(c => grid.appendChild(c));
   });
 
   // ---------- helpers ----------
-  const fmt = n => Number(n).toLocaleString("ru-RU").replace(/ /g, " ") + " so'm";
+  const fmt = n => n ? Number(n).toLocaleString("ru-RU").replace(/ /g, " ") + " so'm" : "narxini so'rang";
   const copy = async text => {
     try { await navigator.clipboard.writeText(text); return true; }
     catch {
@@ -53,6 +55,17 @@
       return ok;
     }
   };
+
+  // ---------- colour swatches ----------
+  $$(".swatches").forEach(group => {
+    const img = $(".card__img img", group.closest(".card"));
+    $$(".swatch", group).forEach(sw => sw.addEventListener("click", () => {
+      $$(".swatch", group).forEach(s => { s.classList.remove("is-active"); s.setAttribute("aria-pressed", "false"); });
+      sw.classList.add("is-active");
+      sw.setAttribute("aria-pressed", "true");
+      img.src = sw.dataset.src;
+    }));
+  });
 
   // ---------- product select in form ----------
   const select = $("#productSelect");
