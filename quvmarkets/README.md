@@ -23,7 +23,7 @@ Yangi mahsulot uchun bitta `<article>` blokini nusxalab, matnini o'zgartiring
 (`data-cat="treadmill"` — yugurish yo'lagi, `data-cat="bike"` — velotrenajor).
 
 ## Aloqa ma'lumotlari
-Telefon: +998 99 610 99 06 · Telegram: @quvmarkets · Instagram: QuvMarkets.
+Telefon: +998 93 168 94 74, +998 93 103 46 56 · Telegram: @quv_market · Instagram: QuvMarkets.
 Do'kon manzilini qo'shmoqchi bo'lsangiz: `index.html` dagi "Offline do'kon" kartasi va
 yuqoridagi JSON-LD (`"address"`) qismiga ko'cha nomini yozing.
 

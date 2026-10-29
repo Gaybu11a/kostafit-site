@@ -41,6 +41,7 @@ button { background: none; border: 0; cursor: pointer; }
 .topbar { background: var(--dark); color: #d9dbe2; font-size: 13px; }
 .topbar__inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 8px; padding-bottom: 8px; }
 .topbar__links { display: flex; gap: 18px; font-weight: 700; }
+.topbar__links a { white-space: nowrap; }
 .topbar__links a:hover { color: var(--accent); }
 
 .nav { position: sticky; top: 0; z-index: 40; background: rgba(246,245,242,.88); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color .3s; }
@@ -232,7 +233,8 @@ a.ccard:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
   .nav__links a { padding: 14px 4px; border-bottom: 1px solid var(--line); }
   .nav__links a::after { display: none; }
   .topbar__inner > span { display: none; }
-  .topbar__links { width: 100%; justify-content: space-between; }
+  .topbar__links { width: 100%; justify-content: space-between; gap: 10px; }
+  .topbar__links a[href="tel:+998931034656"] { display: none; }
 }
 @media (max-width: 520px) {
   .features { grid-template-columns: 1fr; }
